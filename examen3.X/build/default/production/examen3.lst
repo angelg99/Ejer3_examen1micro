@@ -1,0 +1,497 @@
+MPASM 5.87                       EXAMEN3.ASM   3-15-2021  12:53:03         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 #include "p16F628a.inc"    ;incluir librerias relacionadas con el dispositivo
+                      00001         LIST
+                      00002 
+                      00003 ;==========================================================================
+                      00004 ; Build date : Jan 06 2020
+                      00005 ;  MPASM PIC16F628A processor include
+                      00006 ; 
+                      00007 ;  (c) Copyright 1999-2020 Microchip Technology, All rights reserved
+                      00008 ;==========================================================================
+                      00009 
+                      00386         LIST
+2007   3F19           00002  __CONFIG _FOSC_INTOSCCLK & _WDTE_OFF & _PWRTE_OFF & _MCLRE_OFF & _BOREN_OFF & _LVP_OFF & _CPD_OFF & _CP
+                            _OFF   
+                      00003 ;configuración del dispositivotodo en OFF y la frecuencia de oscilador
+                      00004 ;es la del "reloj del oscilador interno" (INTOSCCLK)    
+                      00005 RES_VECT  CODE    0x0000            ; processor reset vector
+0000   2???           00006     GOTO    START                   ; go to beginning of program
+                      00007 ; TODO ADD INTERRUPTS HERE IF USED
+                      00008 MAIN_PROG CODE                      ; let linker place main program
+                      00009 ;variables para el contador:
+  00000030            00010 i equ 0x30
+  00000031            00011 j equ 0x31
+  00000032            00012 k equ 0x32
+  00000033            00013 x equ 0x33
+  00000034            00014 y equ 0x34
+  00000035            00015 z equ 0x35
+  00000036            00016 a equ 0x36
+  00000037            00017 c equ 0x37
+  00000038            00018 d equ 0x38
+  00000039            00019 cont equ 0x39
+                      00020  ;inicio del programa:
+0000                  00021 START
+0000   3007           00022     MOVLW 0x07 ;Apagar comparadores
+0001   009F           00023     MOVWF CMCON
+0002   1303           00024     BCF STATUS, RP1 ;Cambiar al banco 1
+0003   1683           00025     BSF STATUS, RP0
+0004   3002           00026     MOVLW b'00000010' ;Establecer puerto B como salida (los 8 bits del puerto)
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0005   0086           00027     MOVWF TRISB
+0006   1283           00028     BCF STATUS, RP0 ;Regresar al banco 0
+0007   0000           00029     NOP
+0008                  00030 inicio:
+                      00031    ; BTFSC PORTB,1
+                      00032    ; GOTO $+6
+0008   1006           00033     bcf PORTB,0
+0009   2???           00034     call tiempo3
+000A   0000           00035     nop
+000B   1406           00036     bsf PORTB,0
+000C   2???           00037     call tiempo3
+                      00038 ;    BTFSS PORTB,1
+                      00039  ;   GOTO inicio   
+000D   1006           00040     bcf PORTB,0  ;poner el puerto B0 (bit 0 del puerto B) en 0
+000E   2???           00041     call tiempo1 ;llamar a la rutina de tiempo
+MPASM 5.87                       EXAMEN3.ASM   3-15-2021  12:53:03         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000F   2???           00042     call tiempo2
+0010   3003           00043     movlw d'3'
+0011   00B9           00044     movwf cont
+0012   0BB9           00045     DECFSZ cont,f
+0013   2???           00046     goto $-1
+0014   1406           00047     bsf PORTB,0  ;poner el puerto B0 (bit 0 del puerto B) en 1
+0015   2???           00048     call tiempo1 ;llamar a la rutina de tiempo
+0016   2???           00049     call tiempo2
+0017   3002           00050     movlw d'2'
+0018   00B9           00051     movwf cont
+0019   0BB9           00052     DECFSZ cont,f
+001A   2???           00053     goto $-1
+001B   0000           00054     nop
+001C   2???           00055     goto inicio  ;regresar y repetir
+                      00056  
+001D                  00057 tiempo3:
+Warning[203]: Found opcode in column 1. (movlw)
+001D   301B           00058 movlw d'27' ;establecer valor de la variable i
+Warning[203]: Found opcode in column 1. (movwf)
+001E   00B6           00059 movwf a
+001F                  00060 aloop:
+Warning[203]: Found opcode in column 1. (nop)
+001F   0000           00061 nop ;NOPs de relleno (ajuste de tiempo)
+Warning[203]: Found opcode in column 1. (nop)
+0020   0000           00062 nop
+Warning[203]: Found opcode in column 1. (nop)
+0021   0000           00063 nop
+Warning[203]: Found opcode in column 1. (nop)
+0022   0000           00064 nop
+Warning[203]: Found opcode in column 1. (nop)
+0023   0000           00065 nop
+Warning[203]: Found opcode in column 1. (movlw)
+0024   3032           00066 movlw d'50' ;establecer valor de la variable j
+Warning[203]: Found opcode in column 1. (movwf)
+0025   00B7           00067 movwf c
+0026                  00068 cloop:
+Warning[203]: Found opcode in column 1. (nop)
+0026   0000           00069 nop ;NOPs de relleno (ajuste de tiempo)
+Warning[203]: Found opcode in column 1. (movlw)
+0027   303C           00070 movlw d'60' ;establecer valor de la variable k
+Warning[203]: Found opcode in column 1. (movwf)
+0028   00B8           00071 movwf d
+0029                  00072 dloop:
+Warning[203]: Found opcode in column 1. (decfsz)
+0029   0BB8           00073 decfsz d,f
+Warning[203]: Found opcode in column 1. (goto)
+002A   2???           00074 goto dloop
+Warning[203]: Found opcode in column 1. (decfsz)
+002B   0BB7           00075 decfsz c,f
+Warning[203]: Found opcode in column 1. (goto)
+002C   2???           00076 goto cloop
+Warning[203]: Found opcode in column 1. (decfsz)
+002D   0BB6           00077 decfsz a,f
+MPASM 5.87                       EXAMEN3.ASM   3-15-2021  12:53:03         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Warning[203]: Found opcode in column 1. (goto)
+002E   2???           00078 goto aloop
+Warning[203]: Found opcode in column 1. (return)
+002F   0008           00079 return ;salir de la rutina de tiempo y regresar al
+                      00080 ;valor de contador de programa
+                      00081    
+0030                  00082 tiempo2:
+Warning[203]: Found opcode in column 1. (nop)
+0030   0000           00083 nop ;NOPs de relleno (ajuste de tiempo)
+Warning[203]: Found opcode in column 1. (nop)
+0031   0000           00084 nop
+Warning[203]: Found opcode in column 1. (movlw)
+0032   3036           00085 movlw d'54' ;establecer valor de la variable i
+Warning[203]: Found opcode in column 1. (movwf)
+0033   00B3           00086 movwf x
+0034                  00087 xloop:
+Warning[203]: Found opcode in column 1. (nop)
+0034   0000           00088 nop ;NOPs de relleno (ajuste de tiempo)
+Warning[203]: Found opcode in column 1. (nop)
+0035   0000           00089 nop
+Warning[203]: Found opcode in column 1. (nop)
+0036   0000           00090 nop
+Warning[203]: Found opcode in column 1. (nop)
+0037   0000           00091 nop
+Warning[203]: Found opcode in column 1. (nop)
+0038   0000           00092 nop
+Warning[203]: Found opcode in column 1. (movlw)
+0039   3032           00093 movlw d'50' ;establecer valor de la variable j
+Warning[203]: Found opcode in column 1. (movwf)
+003A   00B4           00094 movwf y
+003B                  00095 yloop:
+Warning[203]: Found opcode in column 1. (nop)
+003B   0000           00096 nop ;NOPs de relleno (ajuste de tiempo)
+Warning[203]: Found opcode in column 1. (movlw)
+003C   303C           00097 movlw d'60' ;establecer valor de la variable k
+Warning[203]: Found opcode in column 1. (movwf)
+003D   00B5           00098 movwf z
+003E                  00099 zloop:
+Warning[203]: Found opcode in column 1. (decfsz)
+003E   0BB5           00100 decfsz z,f
+Warning[203]: Found opcode in column 1. (goto)
+003F   2???           00101 goto zloop
+Warning[203]: Found opcode in column 1. (decfsz)
+0040   0BB4           00102 decfsz y,f
+Warning[203]: Found opcode in column 1. (goto)
+0041   2???           00103 goto yloop
+Warning[203]: Found opcode in column 1. (decfsz)
+0042   0BB3           00104 decfsz x,f
+Warning[203]: Found opcode in column 1. (goto)
+0043   2???           00105 goto xloop
+Warning[203]: Found opcode in column 1. (return)
+0044   0008           00106 return ;salir de la rutina de tiempo y regresar al
+                      00107 ;valor de contador de programa
+MPASM 5.87                       EXAMEN3.ASM   3-15-2021  12:53:03         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00108 
+                      00109 ;rutina de tiempo
+0045                  00110 tiempo1:
+0045   3064           00111     movlw d'100' ;establecer valor de la variable i
+0046   00B0           00112     movwf i
+0047                  00113 iloop:
+0047   0000           00114     nop
+0048   0000           00115     nop
+0049   0000           00116     nop
+004A   0000           00117     nop
+004B   0000           00118     nop
+004C   3036           00119     movlw d'54' ;establecer valor de la variable j
+004D   00B1           00120     movwf j
+004E                  00121 jloop:
+004E   0000           00122     nop
+004F   0000           00123     nop
+0050   0000           00124     nop
+0051   0000           00125     nop
+0052   303B           00126     movlw d'59' ;establecer valor de la variable k
+0053   00B2           00127     movwf k
+0054                  00128 kloop:   
+0054   0BB2           00129     decfsz k,f
+0055   2???           00130     goto kloop
+0056   0BB1           00131     decfsz j,f
+0057   2???           00132     goto jloop
+0058   0BB0           00133     decfsz i,f
+0059   2???           00134     goto iloop
+005A   301E           00135     movlw d'30'
+005B   00B1           00136     movwf j
+005C   0BB1           00137     decfsz j,f
+005D   2???           00138     goto $-1
+005E   0008           00139     return    ;salir de la rutina de tiempo y regresar al
+                      00140         ;valor de contador de programa
+3F19                  00141     END
+MPASM 5.87                       EXAMEN3.ASM   3-15-2021  12:53:03         PAGE  5
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+ADDEN                             00000003
+ADEN                              00000003
+BRGH                              00000002
+C                                 00000000
+C1INV                             00000004
+C1OUT                             00000006
+C2INV                             00000005
+C2OUT                             00000007
+CCP1CON                           00000017
+CCP1IE                            00000002
+CCP1IF                            00000002
+CCP1M0                            00000000
+CCP1M1                            00000001
+CCP1M2                            00000002
+CCP1M3                            00000003
+CCP1X                             00000005
+CCP1Y                             00000004
+CCPR1                             00000015
+CCPR1H                            00000016
+CCPR1L                            00000015
+CIS                               00000003
+CM0                               00000000
+CM1                               00000001
+CM2                               00000002
+CMCON                             0000001F
+CMIE                              00000006
+CMIF                              00000006
+CREN                              00000004
+CSRC                              00000007
+DATA_CP_OFF                       00003FFF
+DATA_CP_ON                        00003EFF
+DC                                00000001
+EEADR                             0000009B
+EECON1                            0000009C
+EECON2                            0000009D
+EEDATA                            0000009A
+EEIE                              00000007
+EEIF                              00000007
+F                                 00000001
+FERR                              00000002
+FSR                               00000004
+GIE                               00000007
+INDF                              00000000
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IRP                               00000007
+NOT_BO                            00000000
+NOT_BOD                           00000000
+NOT_BOR                           00000000
+NOT_PD                            00000003
+NOT_POR                           00000001
+MPASM 5.87                       EXAMEN3.ASM   3-15-2021  12:53:03         PAGE  6
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+NOT_RBPU                          00000007
+NOT_T1SYNC                        00000002
+NOT_TO                            00000004
+OERR                              00000001
+OPTION_REG                        00000081
+OSCF                              00000003
+PCL                               00000002
+PCLATH                            0000000A
+PCON                              0000008E
+PEIE                              00000006
+PIE1                              0000008C
+PIR1                              0000000C
+PORTA                             00000005
+PORTB                             00000006
+PR2                               00000092
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+RA0                               00000000
+RA1                               00000001
+RA2                               00000002
+RA3                               00000003
+RA4                               00000004
+RA5                               00000005
+RA6                               00000006
+RA7                               00000007
+RB0                               00000000
+RB1                               00000001
+RB2                               00000002
+RB3                               00000003
+RB4                               00000004
+RB5                               00000005
+RB6                               00000006
+RB7                               00000007
+RBIE                              00000003
+RBIF                              00000000
+RCIE                              00000005
+RCIF                              00000005
+RCREG                             0000001A
+RCSTA                             00000018
+RD                                00000000
+RP0                               00000005
+RP1                               00000006
+RX9                               00000006
+RX9D                              00000000
+SPBRG                             00000099
+SPEN                              00000007
+SREN                              00000005
+START                             00000000
+STATUS                            00000003
+SYNC                              00000004
+T0CS                              00000005
+MPASM 5.87                       EXAMEN3.ASM   3-15-2021  12:53:03         PAGE  7
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+T1CKPS0                           00000004
+T1CKPS1                           00000005
+T1CON                             00000010
+T1OSCEN                           00000003
+T2CKPS0                           00000000
+T2CKPS1                           00000001
+T2CON                             00000012
+TMR0                              00000001
+TMR0IE                            00000005
+TMR0IF                            00000002
+TMR1                              0000000E
+TMR1CS                            00000001
+TMR1H                             0000000F
+TMR1IE                            00000000
+TMR1IF                            00000000
+TMR1L                             0000000E
+TMR1ON                            00000000
+TMR2                              00000011
+TMR2IE                            00000001
+TMR2IF                            00000001
+TMR2ON                            00000002
+TOUTPS0                           00000003
+TOUTPS1                           00000004
+TOUTPS2                           00000005
+TOUTPS3                           00000006
+TRISA                             00000085
+TRISA0                            00000000
+TRISA1                            00000001
+TRISA2                            00000002
+TRISA3                            00000003
+TRISA4                            00000004
+TRISA5                            00000005
+TRISA6                            00000006
+TRISA7                            00000007
+TRISB                             00000086
+TRISB0                            00000000
+TRISB1                            00000001
+TRISB2                            00000002
+TRISB3                            00000003
+TRISB4                            00000004
+TRISB5                            00000005
+TRISB6                            00000006
+TRISB7                            00000007
+TRMT                              00000001
+TX9                               00000006
+TX9D                              00000000
+TXEN                              00000005
+TXIE                              00000004
+TXIF                              00000004
+TXREG                             00000019
+MPASM 5.87                       EXAMEN3.ASM   3-15-2021  12:53:03         PAGE  8
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+TXSTA                             00000098
+VR0                               00000000
+VR1                               00000001
+VR2                               00000002
+VR3                               00000003
+VRCON                             0000009F
+VREN                              00000007
+VROE                              00000006
+VRR                               00000005
+W                                 00000000
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+Z                                 00000002
+_BODEN_OFF                        00003FBF
+_BODEN_ON                         00003FFF
+_BOREN_OFF                        00003FBF
+_BOREN_ON                         00003FFF
+_CONFIG                           00002007
+_CPD_OFF                          00003FFF
+_CPD_ON                           00003EFF
+_CP_OFF                           00003FFF
+_CP_ON                            00001FFF
+_DEVID1                           00002006
+_ER_OSC_CLKOUT                    00003FFF
+_ER_OSC_NOCLKOUT                  00003FFE
+_EXTCLK_OSC                       00003FEF
+_FOSC_ECIO                        00003FEF
+_FOSC_EXTRCCLK                    00003FFF
+_FOSC_EXTRCIO                     00003FFE
+_FOSC_HS                          00003FEE
+_FOSC_INTOSCCLK                   00003FFD
+_FOSC_INTOSCIO                    00003FFC
+_FOSC_LP                          00003FEC
+_FOSC_XT                          00003FED
+_HS_OSC                           00003FEE
+_IDLOC0                           00002000
+_IDLOC1                           00002001
+_IDLOC2                           00002002
+_IDLOC3                           00002003
+_INTOSC_OSC_CLKOUT                00003FFD
+_INTOSC_OSC_NOCLKOUT              00003FFC
+_INTRC_OSC_CLKOUT                 00003FFD
+_INTRC_OSC_NOCLKOUT               00003FFC
+_LP_OSC                           00003FEC
+_LVP_OFF                          00003F7F
+_LVP_ON                           00003FFF
+_MAIN_PROG_0013                   00000013
+_MAIN_PROG_001A                   0000001A
+_MAIN_PROG_005D                   0000005D
+_MCLRE_OFF                        00003FDF
+_MCLRE_ON                         00003FFF
+_PWRTE_OFF                        00003FFF
+MPASM 5.87                       EXAMEN3.ASM   3-15-2021  12:53:03         PAGE  9
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+_PWRTE_ON                         00003FF7
+_RC_OSC_CLKOUT                    00003FFF
+_RC_OSC_NOCLKOUT                  00003FFE
+_WDTE_OFF                         00003FFB
+_WDTE_ON                          00003FFF
+_WDT_OFF                          00003FFB
+_WDT_ON                           00003FFF
+_XT_OSC                           00003FED
+__16F628A                         00000001
+a                                 00000036
+aloop                             0000001F
+c                                 00000037
+cloop                             00000026
+cont                              00000039
+d                                 00000038
+dloop                             00000029
+i                                 00000030
+iloop                             00000047
+inicio                            00000008
+j                                 00000031
+jloop                             0000004E
+k                                 00000032
+kloop                             00000054
+tiempo1                           00000045
+tiempo2                           00000030
+tiempo3                           0000001D
+x                                 00000033
+xloop                             00000034
+y                                 00000034
+yloop                             0000003B
+z                                 00000035
+zloop                             0000003E
+
+Errors   :     0
+Warnings :    40 reported,     0 suppressed
+Messages :     1 reported,     0 suppressed
+
+
